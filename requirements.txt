@@ -1,0 +1,7 @@
+langgraph
+langchain_community 
+langchain_core 
+tavily-python 
+langchain_nvidia_ai_endpoints
+python-dotenv
+IPython
