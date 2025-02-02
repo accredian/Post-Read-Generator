@@ -1,10 +1,13 @@
-import asyncio
+import asyncio, os
 from langsmith import traceable
 from pydantic import BaseModel, Field
 from state import Section
 from tavily import TavilyClient, AsyncTavilyClient
 
+
+
 # Search engine Tavily
+os.environ["TAVILY_API_KEY"]="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"
 tavily_client = TavilyClient()
 tavily_async_client = AsyncTavilyClient()
 

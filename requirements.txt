@@ -5,3 +5,4 @@ tavily-python
 langchain_nvidia_ai_endpoints
 python-dotenv
 IPython
+md2docx-python

@@ -9,8 +9,6 @@ from utils import tavily_search_async
 from langchain_nvidia_ai_endpoints import ChatNVIDIA
 import os
 
-# Set your environment variable or use getpass for interactive input
-os.environ["NVIDIA_API_KEY"] = "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"
 # Proceed with model initialization
 llm = ChatNVIDIA(model="meta/llama-3.3-70b-instruct", temperature=0)
 

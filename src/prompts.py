@@ -1,7 +1,7 @@
 # Prompt to generate a search query to help with planning the report outline
 report_planner_query_writer_instructions="""You are an expert technical writer, helping to plan a report. 
 
-The report will be focused on real 4 to 5 real world application the following topic:
+The report will be focused on real 4 to 5 real world applications of the following topic:
 
 {topic}
 
@@ -43,16 +43,15 @@ Now, generate the sections of the report. Each section should have the following
 - Content - The content of the section, which you will leave blank for now.
 
 Consider which sections require web research. For example, introduction and conclusion will not require research because they will distill information from other parts of the report.
-Note: All report should be on context of real applications of {topic}"""
-
+Note: All reports should be on the context of real applications of {topic} and the introduction should be general, avoiding technical jargon or specific details."""
 
 # Structure
 report_structure = """This report type focuses on comparative analysis.
 
 The report structure should include:
 1. Introduction (no research needed)
-   - Brief overview of the topic area
-   - Context for the comparison
+   - Brief introduction of the topic (100-150 words)
+   Note: The introduction should not contain any technical details, links, and should be written in simple language.
 
 2. Main Body Sections:
    - One dedicated section for EACH offering being compared in the user-provided list
@@ -63,15 +62,13 @@ The report structure should include:
    
 3. No Main Body Sections other than the ones dedicated to each offering in the user-provided list
 
-4. Conclusion with Comparison Table (no research needed)
-   - Structured comparison table that:
-     * Compares all offerings from the user-provided list across key dimensions
-     * Highlights relative strengths and weaknesses
-   - Final recommendations"""
-
+4. Conclusion (no research needed)
+   - Structured relative strengths and weaknesses
+   - Final recommendations
+   """
 
 # Query writer instructions
-query_writer_instructions="""Your goal is to generate targeted web search queries that will gather comprehensive information about real world applications of {section_topic} for writing  technical report section.
+query_writer_instructions="""Your goal is to generate targeted web search queries that will gather comprehensive information about real-world applications of {section_topic} for writing a technical report section.
 
 Topic for this section:
 {section_topic}
