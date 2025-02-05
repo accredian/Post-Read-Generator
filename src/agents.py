@@ -10,7 +10,7 @@ from langchain_groq import ChatGroq
 from langgraph.graph import StateGraph, START, END
 from md2docx_python.src.md2docx_python import markdown_to_word
 import streamlit as st
-
+import asyncio
 
 
 #############################################################################################################
@@ -28,10 +28,16 @@ def generate_queries(topic: str) -> List[str]:
 
 
 # 2. Web Search Agent
-def perform_search(state: AgentState):
+async def perform_search(state: AgentState):
     results = []
+    tasks = []
+    
     for query in state['query']:
-        search_results = tavily_client.search(query,max_results=2)  # Get top 5 results per query
+        tasks.append(tavily_async_client.search(query, max_results=2))  # Collect tasks
+
+    search_results_list = await asyncio.gather(*tasks)  # Execute all tasks concurrently
+
+    for query, search_results in zip(state['query'], search_results_list):
         results.append({
             "query": query,
             "results": [{
@@ -43,31 +49,40 @@ def perform_search(state: AgentState):
     return {"search_results": results}
 
 
+
 # Report generating agent
 def report_generation(state: AgentState) -> str:
-    # Extracting relevant search results from the state
     search_results = state['search_results']
     
-    # Format system instructions
     formatted_results = "\n".join(
         [f"**{result['query']}**\n" + "\n".join(
             [f"- [{res['title']}]({res['url']}): {res['content']}" for res in result['results']]
         ) for result in search_results]
     )
     
-    system_instruction = report_prompt + "\n\n" + formatted_results
-
-    # Write report
+    system_instruction = f"{report_prompt}\n\n{formatted_results}"
+    
     result = llm.invoke(
         [SystemMessage(content=system_instruction)] +
         [HumanMessage(content="Write a concise report using the above information.")]
     )
 
-    # Return only the generated report text
     return {"report": result.content}
 
 
+# Build LangGraph workflow
+workflow = StateGraph(AgentState)
+workflow.add_node("generate_queries", generate_queries)
+workflow.add_node("perform_search", perform_search)
+workflow.add_node("report_generation", report_generation)
 
+
+workflow.set_entry_point("generate_queries")
+workflow.add_edge("generate_queries", "perform_search")
+workflow.add_edge("perform_search", "report_generation")
+workflow.add_edge("report_generation",END)
+
+workflow_graph = workflow.compile()
 
 #############################################################################################################
 # streamlit application
@@ -96,25 +111,10 @@ tavily_async_client = AsyncTavilyClient()
 
 
 # Function to run the main app logic
-def run_app(topic):
+async def run_app(topic):
     # Placeholder logic to demonstrate usage
     st.write(f"Processing topic: {topic}")
-    
-    # Build LangGraph workflow
-    workflow = StateGraph(AgentState)
-    workflow.add_node("generate_queries", generate_queries)
-    workflow.add_node("perform_search", perform_search)
-    workflow.add_node("report_generation", report_generation)
-
-
-    workflow.set_entry_point("generate_queries")
-    workflow.add_edge("generate_queries", "perform_search")
-    workflow.add_edge("perform_search", "report_generation")
-    workflow.add_edge("report_generation",END)
-
-    workflow_graph = workflow.compile()
-
-    result=workflow_graph.invoke({"topic": topic})
+    result = await workflow_graph.ainvoke({"topic": topic})
 
     # Display the generated report
     st.markdown(re.sub(r'<think>.*?</think>\n\n', '', result['report'], flags=re.DOTALL))
@@ -143,6 +143,6 @@ topic = st.text_input("Enter the topic")
 # Submit button to run the app
 if st.button("Submit"):
     if api_key_1 and api_key_2 and topic:
-        run_app(topic)
+        asyncio.run(run_app(topic))
     else:
         st.error("Please enter both API keys and a topic.")
