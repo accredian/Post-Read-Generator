@@ -84,17 +84,29 @@ workflow.add_edge("report_generation",END)
 
 workflow_graph = workflow.compile()
 
+
+
 #############################################################################################################
 # streamlit application
 
 # Set the title of the app
-st.title("Post read Report Generator Agent")
+st.title("AI Report Generator Agent")
+
+st.image("AI.png", use_column_width=True)
+
+# st.logo("logo.jpg", use_column_width=True)
+st.logo("logo.jpg", size="large", link=None, icon_image=None)
 
 # Sidebar with API key input fields and a brief description
+
 st.sidebar.title("API Keys and Description")
+
 api_key_1 = st.sidebar.text_input("Tavily API Key 1", type="password")
 api_key_2 = st.sidebar.text_input("Groq API Key 2", type="password")
-st.sidebar.info("This is a Streamlit app that takes two API keys as input and allows users to enter a topic for processing.")
+
+st.sidebar.info("""The Post-Read Report Generator Agent is a cutting-edge Streamlit application designed to streamline the process 
+                of generating comprehensive technical reports.
+                By leveraging the power of advanced AI models and APIs, this app empowers users to produce well-structured reports effortlessly.""")
 
 #######################################################################
 # Set the API keys to environment variables
