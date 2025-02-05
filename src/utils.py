@@ -5,7 +5,6 @@ from state import Section
 from tavily import TavilyClient, AsyncTavilyClient
 
 
-
 # Search engine Tavily
 os.environ["TAVILY_API_KEY"]="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"
 tavily_client = TavilyClient()
