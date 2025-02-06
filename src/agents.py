@@ -124,7 +124,7 @@ os.environ["GROQ_API_KEY"] = api_key_2
 os.environ["OPENAI_API_KEY"] = api_key_3
 
 # Proceed with model initialization
-st.sidebar.title("Model Initialization")
+st.sidebar.title("Model Selection")
 # choose model
 
 # Set the model based on the user's choice
