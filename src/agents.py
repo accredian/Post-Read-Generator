@@ -30,7 +30,7 @@ def generate_queries(topic: str) -> List[str]:
     return {'query':[i.search_query for i in result.queries]}
 
 
-# 2. Web Search Agent
+# Web Search Agent
 async def perform_search(state: AgentState):
     results = []
     tasks = []
@@ -108,47 +108,6 @@ with st.sidebar.container():
     </div>
     """, unsafe_allow_html=True)
 
-# Sidebar with API key input fields and a brief description
-st.sidebar.title("API Keys Configuration")
-
-api_key_1 = st.sidebar.text_input("Tavily API Key 1", type="password")
-api_key_2 = st.sidebar.text_input("Groq API Key 2", type="password")
-api_key_3 = st.sidebar.text_input("OpenAi API Key 3", type="password")
-
-#######################################################################
-# Set the API keys to environment variables
-if os.environ.get("TAVILY_API_KEY") is None:
-    st.write("Set Tavily API and selected model API Key")
-os.environ["TAVILY_API_KEY"] = api_key_1
-os.environ["GROQ_API_KEY"] = api_key_2
-os.environ["OPENAI_API_KEY"] = api_key_3
-
-# Proceed with model initialization
-st.sidebar.title("Model Selection")
-# choose model
-
-# Set the model based on the user's choice
-# Dropdown to select the model
-model_option = st.sidebar.selectbox(
-    "Select Model",
-    ("ChatGroq LLaMA-70B", "OpenAI GPT-4o")
-)
-
-if model_option == "ChatGroq LLaMA-70B":
-    llm = ChatGroq(model="deepseek-r1-distill-llama-70b", verbose=False)
-elif model_option == "OpenAI GPT-4o":
-    llm = ChatOpenAI(
-        model="gpt-4o",
-        temperature=0,
-        max_tokens=None,
-        timeout=None,
-        max_retries=2,
-    )
-#Search client
-tavily_client = TavilyClient()
-tavily_async_client = AsyncTavilyClient()
-#######################################################################
-
 
 # Function to run the main app logic
 async def run_app(topic):
@@ -177,14 +136,54 @@ async def run_app(topic):
         mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
     )
 
+
+# Sidebar with API key input fields and a brief description
+st.sidebar.title("API Keys Configuration")
+# Sidebar for API key inputs
+api_key_1 = st.sidebar.text_input("Tavily API Key 1", type="password")
+api_key_2 = st.sidebar.text_input("Groq API Key 2", type="password")
+api_key_3 = st.sidebar.text_input("OpenAI API Key 3", type="password")
+
+# Model Selection
+model_option = st.sidebar.selectbox(
+    "Select Model",
+    ("ChatGroq LLaMA-70B", "OpenAI GPT-4o")
+)
+
 # Main screen input field for topic
 topic = st.text_input("Enter the topic")
 
 # Submit button to run the app
 if st.button("Submit"):
-    if api_key_1 and api_key_2 and topic:
-        asyncio.run(run_app(topic))
-    elif api_key_1 and api_key_3 and topic:
-        asyncio.run(run_app(topic))
+
+    # Validate and set API keys only after clicking submit
+    os.environ["TAVILY_API_KEY"] = api_key_1
+    os.environ["GROQ_API_KEY"] = api_key_2
+    os.environ["OPENAI_API_KEY"] = api_key_3
+
+    # Ensure required keys are present before proceeding
+    if (not api_key_1 and not api_key_2) or (not api_key_1 and not api_key_3):
+        st.error("🚨 Please enter required API keys before proceeding!")
     else:
-        st.error("Please enter both API keys and a topic.")
+        # Initialize API clients after successful validation
+        try:
+            tavily_client = TavilyClient(api_key=os.environ.get("TAVILY_API_KEY"))
+            tavily_async_client = AsyncTavilyClient(api_key=os.environ.get("TAVILY_API_KEY"))
+
+            if model_option == "ChatGroq LLaMA-70B":
+                llm = ChatGroq(model="deepseek-r1-distill-llama-70b", verbose=False)
+            else:
+                llm = ChatOpenAI(
+                    model="gpt-4o",
+                    temperature=0,
+                    max_tokens=None,
+                    timeout=None,
+                    max_retries=2,
+                )
+
+            # Run the app logic
+            asyncio.run(run_app(topic))
+
+        except Exception as e:
+            st.error(f"❌ Error initializing API clients: {e}")
+
