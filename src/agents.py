@@ -11,6 +11,9 @@ from langgraph.graph import StateGraph, START, END
 from md2docx_python.src.md2docx_python import markdown_to_word
 import streamlit as st
 import asyncio
+from langchain_openai import ChatOpenAI
+
+
 
 
 #############################################################################################################
@@ -86,36 +89,61 @@ workflow_graph = workflow.compile()
 
 
 
+
 #############################################################################################################
 # streamlit application
 
 # Set the title of the app
 st.title("AI Report Generator Agent")
 
-st.image("AI.png", use_column_width=True)
+# Custom HTML and CSS for the About section in a square box
 
-# st.logo("logo.jpg", use_column_width=True)
-st.logo("logo.jpg", size="large", link=None, icon_image=None)
+with st.sidebar.container():
+    st.markdown("""
+    <div style="padding: 10px; border: 2px solid #ccc; border-radius: 10px; background-color: #000000; color: #ffffff;">
+        <h4>About</h4>
+        <p>The Post-Read Report Generator Agent is a cutting-edge Streamlit application designed to streamline the process 
+                of generating comprehensive technical reports.
+                By leveraging the power of advanced AI models and APIs, this app empowers users to produce well-structured reports effortlessly.</p>
+    </div>
+    """, unsafe_allow_html=True)
 
 # Sidebar with API key input fields and a brief description
-
-st.sidebar.title("API Keys and Description")
+st.sidebar.title("API Keys Configuration")
 
 api_key_1 = st.sidebar.text_input("Tavily API Key 1", type="password")
 api_key_2 = st.sidebar.text_input("Groq API Key 2", type="password")
-
-st.sidebar.info("""The Post-Read Report Generator Agent is a cutting-edge Streamlit application designed to streamline the process 
-                of generating comprehensive technical reports.
-                By leveraging the power of advanced AI models and APIs, this app empowers users to produce well-structured reports effortlessly.""")
+api_key_3 = st.sidebar.text_input("OpenAi API Key 3", type="password")
 
 #######################################################################
 # Set the API keys to environment variables
+if os.environ.get("TAVILY_API_KEY") is None:
+    st.write("Set Tavily API and selected model API Key")
 os.environ["TAVILY_API_KEY"] = api_key_1
 os.environ["GROQ_API_KEY"] = api_key_2
+os.environ["OPENAI_API_KEY"] = api_key_3
 
 # Proceed with model initialization
-llm = ChatGroq(model="deepseek-r1-distill-llama-70b",verbose=False)
+st.sidebar.title("Model Initialization")
+# choose model
 
+# Set the model based on the user's choice
+# Dropdown to select the model
+model_option = st.sidebar.selectbox(
+    "Select Model",
+    ("ChatGroq LLaMA-70B", "OpenAI GPT-4o")
+)
+
+if model_option == "ChatGroq LLaMA-70B":
+    llm = ChatGroq(model="deepseek-r1-distill-llama-70b", verbose=False)
+elif model_option == "OpenAI GPT-4o":
+    llm = ChatOpenAI(
+        model="gpt-4o",
+        temperature=0,
+        max_tokens=None,
+        timeout=None,
+        max_retries=2,
+    )
 #Search client
 tavily_client = TavilyClient()
 tavily_async_client = AsyncTavilyClient()
@@ -155,6 +183,8 @@ topic = st.text_input("Enter the topic")
 # Submit button to run the app
 if st.button("Submit"):
     if api_key_1 and api_key_2 and topic:
+        asyncio.run(run_app(topic))
+    elif api_key_1 and api_key_3 and topic:
         asyncio.run(run_app(topic))
     else:
         st.error("Please enter both API keys and a topic.")

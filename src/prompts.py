@@ -27,6 +27,10 @@ Generate a report based on the following outline or format strictly:
 ## Industry case study with comapny (if available)
     - Provide a case study description related to given topic.(150 to 200 words)
 
-### list all source hyper-links.
-Note: Do not include source links of edutech website like udemy, coursera, Javapoint, Byjus, Analyticsvidhya, etc.
+### Additional resources.
+    - Name: [Link](url)
+    - Name: [Link](url)
+    - Name: [Link](url)
+    - Name: [Link](url)
+Note: Do not include source links of edutech website like GeeksforGeeks, udemy, Javapoint, Byjus, Analyticsvidhya, etc.
 """
