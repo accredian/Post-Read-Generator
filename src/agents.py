@@ -25,7 +25,7 @@ def generate_queries(topic: str) -> List[str]:
     structured_llm = llm.with_structured_output(Queries)
     result = structured_llm.invoke(
         [SystemMessage(content=system_instruction_query)]+
-         [HumanMessage(content="Generate search queriesthat will help with planning the sections of the report.")]
+         [HumanMessage(content="Generate search queries that will help with planning the sections of the report.")]
         )
     return {'query':[i.search_query for i in result.queries]}
 
@@ -94,7 +94,7 @@ workflow_graph = workflow.compile()
 # streamlit application
 
 # Set the title of the app
-st.title("AI Report Generator Agent")
+st.title("AI Post-read Generator Agent")
 
 # Custom HTML and CSS for the About section in a square box
 
@@ -123,7 +123,7 @@ async def run_app(topic):
         f.write(re.sub(r'<think>.*?</think>\n\n', '', result['report'], flags=re.DOTALL))
 
     markdown_to_word('report.md', 'report.docx')
-    st.success("Report generated successfully. Check the markdown and docx files for the report.")
+    st.success("Post-read generated successfully. Check the markdown and docx files for the report.")
 
      # Add download button
     with open("report.docx", "rb") as file:
@@ -147,7 +147,7 @@ api_key_3 = st.sidebar.text_input("OpenAI API Key 3", type="password")
 # Model Selection
 model_option = st.sidebar.selectbox(
     "Select Model",
-    ("ChatGroq LLaMA-70B", "OpenAI GPT-4o")
+    ("ChatGroq LLaMA-70B", "OpenAI GPT-4o","gpt-4o-mini-2024-07-18", "gpt-4", "gpt-3.5-turbo")
 )
 
 # Main screen input field for topic
