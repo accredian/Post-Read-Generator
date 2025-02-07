@@ -8,3 +8,4 @@ md2docx-python
 streamlit
 langchain-groq
 langchain-openai
+pypandoc
