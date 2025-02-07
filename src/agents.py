@@ -12,7 +12,7 @@ from md2docx_python.src.md2docx_python import markdown_to_word
 import streamlit as st
 import asyncio
 from langchain_openai import ChatOpenAI
-
+import pypandoc
 
 
 
@@ -122,17 +122,17 @@ async def run_app(topic):
     with open('report.md', 'w') as f:
         f.write(re.sub(r'<think>.*?</think>\n\n', '', result['report'], flags=re.DOTALL))
 
-    markdown_to_word('report.md', 'report.docx')
+    pypandoc.convert_file('report.md', 'docx', outputfile="output.docx")
     st.success("Report generated successfully. Check the markdown and docx files for the report.")
 
      # Add download button
-    with open("report.docx", "rb") as file:
+    with open("output.docx", "rb") as file:
         report_data = file.read()
         
     st.download_button(
         label="Download Report",
         data=report_data,
-        file_name="report.docx",
+        file_name="output.docx",
         mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
     )
 
