@@ -9,3 +9,4 @@ streamlit
 langchain-groq
 langchain-openai
 pypandoc
+pandoc
