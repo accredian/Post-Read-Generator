@@ -13,7 +13,7 @@ import streamlit as st
 import asyncio
 from langchain_openai import ChatOpenAI
 import pypandoc
-
+pypandoc.download_pandoc()
 
 #############################################################################################################
 # Query geneartive agent
