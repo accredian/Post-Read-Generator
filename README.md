@@ -1,67 +1,122 @@
 # AI Report Generator Agent
 
-## Overview
+[![Python](https://img.shields.io/badge/python-3.9%2B-blue)](https://www.python.org/downloads/)
 
-The AI Report Generator Agent is a cutting-edge Streamlit application designed to streamline the process of generating comprehensive technical reports. By leveraging the power of advanced AI models and APIs, this app empowers users to produce well-structured reports effortlessly.
+## Project Description
+
+The AI Report Generator Agent is an advanced Streamlit-based application designed to automate the creation of comprehensive technical reports. Leveraging powerful AI models and APIs, this tool generates well-structured, insightful reports from a user-provided topic by performing intelligent query generation, web search, and content synthesis.
 
 ## Features
 
-- **Query Generation**: Automatically generate search queries based on the provided topic.
-- **Web Search**: Perform web searches to gather relevant information.
-- **Report Generation**: Create a concise and comprehensive report using the gathered information.
-- **Markdown to DOCX Conversion**: Convert the generated markdown report to a DOCX file.
+- **Automated Query Generation**: Generates diverse and relevant search queries based on the input topic.
+- **Asynchronous Web Search**: Performs concurrent web searches using the Tavily API to gather up-to-date information.
+- **AI-Powered Report Generation**: Synthesizes search results into a concise, well-organized report with sections including introduction, real-world applications, and industry case studies.
+- **Markdown to DOCX Conversion**: Converts the generated markdown report into a downloadable DOCX file.
+- **Multi-Model Support**: Supports ChatGroq LLaMA-70B and OpenAI GPT-4o models for flexible report generation.
+- **User-Friendly Interface**: Streamlit-based UI with API key management, model selection, and report download functionality.
 
 ## Installation
 
 ### Prerequisites
 
 - Python 3.9 or higher
-- Streamlit
-- langgraph
-- Pandoc (for markdown to DOCX conversion)
-- Required Python packages (listed in `requirements.txt`)
+- Pandoc (required for markdown to DOCX conversion)
+- API keys for:
+  - Tavily
+  - Groq
+  - OpenAI
 
-### Steps
+### Setup Steps
 
-1. **Clone the Repository**:
-   `git clone repo`
-   `cd report agent`
-2. **Create a Virtual Environment**:
-    `python -m venv myenv`
-    `source myenv/bin/activate`
-    *On Windows use*: `.\myenv\Scripts\activate`
+1. **Clone the repository:**
 
-3. **Install Dependencies**:
-    `pip install -r requirements.txt`
+   ```bash
+   git clone <repository-url>
+   cd report-agent
+   ```
 
-### Usage
+2. **Create and activate a virtual environment:**
 
-1. **Run the Streamlit App**:
-`streamlit run app.py`
+   ```bash
+   python -m venv venv
+   # On Windows
+   .\venv\Scripts\activate
+   # On macOS/Linux
+   source venv/bin/activate
+   ```
 
-2. **Enter API Keys**:
-    - Enter your Tavily, Groq, and OpenAI API keys in the sidebar and click "Save API Keys".
+3. **Install dependencies:**
 
-3. **Select Model**:
-    - Choose between "ChatGroq LLaMA-70B" and "OpenAI GPT-4o" in the sidebar.
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-4. **Generate Report**:
-    - Enter the topic for the report and click "Submit".
-    - The app will generate a report and provide options to download it as a DOCX file.
+4. **Install Pandoc:**
 
-### Example
+   Download and install Pandoc from [https://pandoc.org/installing.html](https://pandoc.org/installing.html).
 
-    - Here’s an example of how to use the app:
+## Usage
 
-    - Run the app using streamlit run app.py.
+1. **Run the Streamlit app:**
 
-    - Enter your API keys and save them.
+   ```bash
+   streamlit run src/agents.py
+   ```
 
-    - Select the desired model.
+2. **Configure API keys:**
 
-    - Enter the topic "Artificial Intelligence in Healthcare".
+   Enter your Tavily, Groq, and OpenAI API keys in the sidebar input fields and click "Submit".
 
-    - Click "Submit" to generate the report.
+3. **Select the AI model:**
 
-    - Download the generated report as a DOCX file.
-    
+   Choose from available models including ChatGroq LLaMA-70B and OpenAI GPT-4o.
+
+4. **Enter the report topic:**
+
+   Input the topic you want the report to be generated on.
+
+5. **Generate and download the report:**
+
+   Click "Submit" to start the report generation process. Once complete, view the report in the app and download it as a DOCX file.
+
+## Project Structure
+
+```
+report-agent/
+│
+├── README.md                 # Project documentation
+├── requirements.txt          # Python dependencies
+├── src/
+│   ├── agents.py             # Core agent logic and Streamlit app
+│   ├── state.py              # Data models for agent state and queries
+│   ├── prompts.py            # Prompt templates for query and report generation
+│   ├── utils.py              # Utility functions (if any)
+│   ├── __init__.py           # Package initialization
+│   ├── AI.png                # Project image asset
+│   ├── logo.jpg              # Project logo
+│   ├── output.docx           # Generated report output (example)
+│   └── report.md             # Generated markdown report (example)
+└── .gitignore
+```
+
+## Technologies Used
+
+- [Streamlit](https://streamlit.io/) - Web app framework for Python
+- [Langchain](https://github.com/hwchase17/langchain) - Framework for building LLM applications
+- [Tavily API](https://tavily.com/) - Web search API for gathering information
+- [Groq](https://groq.com/) - AI model provider
+- [OpenAI](https://openai.com/) - GPT models for natural language processing
+- [Pydantic](https://pydantic.dev/) - Data validation and settings management
+- [Pandoc](https://pandoc.org/) - Document converter for markdown to DOCX
+
+## Contributing
+
+Contributions are welcome! Please open issues or submit pull requests for improvements or bug fixes.
+
+## License
+
+This project is licensed under the MIT License.
+
+## Contact
+
+For questions or support, please contact the project maintainer.
